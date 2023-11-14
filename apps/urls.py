@@ -1,9 +1,8 @@
-from django.urls import path
-
-from .auth.users.views import ApiRoot, SignUp, SignIn
+from django.urls import path, include
+from .views import redirectRoot, ApiRoot
 
 urlpatterns = [
-    path('', ApiRoot.as_view()),
-    path('signup', SignUp.as_view()),
-    path('login', SignIn.as_view())
+    path('', redirectRoot, name="redirect-root"),
+    path('api', ApiRoot.as_view(), name='api-root'),
+    path('api/auth/', include("apps.auth.users.urls"))
 ]

@@ -6,11 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-class ApiRoot(APIView):
-    def get(self, request):
-        return Response({"content": "Welcome to the root API!"}, status.HTTP_200_OK)
-
-class SignUp(APIView):
+class SignUpView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -22,10 +18,14 @@ class SignUp(APIView):
             return Response({"token": token.key, "user":serializer.data}, status.HTTP_201_CREATED)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
     
-class SignIn(APIView):
+class SignInView(APIView):
     def post(self,request):
         user = get_object_or_404(User, username=request.data["username"])
         if not user.check_password(request.data["password"]):
             return Response({"detail": "Not Found"}, status.HTTP_404_NOT_FOUND)
         token, created = Token.objects.get_or_create(user=user)
         return Response({"value": token.key}, status.HTTP_202_ACCEPTED)
+
+class AuthRoot(APIView):
+    def get(self, request):
+        return Response({"content": "You have reached auth root"}, status.HTTP_200_OK)
